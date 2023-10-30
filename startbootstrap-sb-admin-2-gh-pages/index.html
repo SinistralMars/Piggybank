@@ -364,38 +364,58 @@
                 <div class="container-fluid">
 
                     <!-- Money Tracker -->
-                    <h1 class="mb-4">Money Tracker</h1>
+                    <h1 class="text-center mb-4">Money Tracker</h1>
+
+                    <!-- Card for Money Tracker -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Manage Your Finances</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Track Your Money</h6>
                         </div>
                         <div class="card-body">
                             <div class="row mb-3">
-                                <div class="col-xl-4">
-                                    <div class="form-group">
-                                        <label for="moneyAmount">Amount: $</label>
+                                <div class="col-xl-6">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
                                         <input type="number" class="form-control" id="moneyAmount" min="0"
                                             placeholder="Enter amount">
                                     </div>
                                 </div>
-                                <div class="col-xl-4 d-flex align-items-end">
-                                    <button class="btn btn-primary" onclick="modifyMoney('add')">Add Money</button>
-                                    <button class="btn btn-danger ml-2" onclick="modifyMoney('subtract')">Subtract
-                                        Money</button>
+                                <div class="col-xl-6">
+                                    <button class="btn btn-success mr-2" onclick="addMoney()">Add</button>
+                                    <button class="btn btn-danger" onclick="subtractMoney()">Subtract</button>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center">
-                                <h5 class="mr-2">Total Money:</h5>
-                                <h5 class="font-weight-bold">$<span id="totalMoney">0.00</span></h5>
-                                <img src="img/Piggy_Bank.jpg" width="25" height="25" class="ml-2">
-                            </div>
+                            <h4 class="text-center">Total Money: $<span id="totalMoney">0.00</span>
+                                <img src="img/Piggy_Bank.jpg" width="25" height="25">
+                            </h4>
                         </div>
                     </div>
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+
+                    <!-- Card for Goal Setting -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Set Your Goal</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-xl-6">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                        <input type="number" class="form-control" id="goalAmount" min="0"
+                                            placeholder="Set your goal">
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <button class="btn btn-info" onclick="setGoal()">Set Goal</button>
+                                </div>
+                            </div>
+                            <h4 class="text-center">Goal: $<span id="displayGoal">0.00</span></h4>
+                            <p id="goalMessage" class="text-center font-weight-bold" style="color:green;"></p>
+                        </div>
                     </div>
 
                     <!-- Content Row -->
@@ -781,24 +801,45 @@
     <script src="js/demo/chart-pie-demo.js"></script>
     <script>
         let total = 0;
+        let goal = 0;
 
-        function modifyMoney(action) {
-            const amountInput = document.getElementById('moneyAmount');
-            const amount = parseFloat(amountInput.value) || 0;
-            if (action === 'add') {
-                total += amount;
-            } else if (action === 'subtract') {
-                if (amount <= total) {
-                    total -= amount;
-                } else {
-                    alert('You cannot subtract more than your current balance.');
-                    return;
-                }
+        function addMoney() {
+            const moneyAmount = parseFloat(document.getElementById('moneyAmount').value) || 0;
+            total += moneyAmount;
+            updateDisplay();
+            document.getElementById('moneyAmount').value = '';
+        }
+
+        function subtractMoney() {
+            const moneyAmount = parseFloat(document.getElementById('moneyAmount').value) || 0;
+            if (moneyAmount <= total) {
+                total -= moneyAmount;
+                updateDisplay();
+            } else {
+                alert("You can't subtract more than you have!");
             }
+            document.getElementById('moneyAmount').value = '';
+        }
 
+        function setGoal() {
+            goal = parseFloat(document.getElementById('goalAmount').value) || 0;
+            document.getElementById('displayGoal').textContent = goal.toFixed(2);
+            checkGoalReached();
+        }
+
+        function updateDisplay() {
             document.getElementById('totalMoney').textContent = total.toFixed(2);
-            amountInput.value = '';  // Clear the input
+            checkGoalReached();
+        }
+
+        function checkGoalReached() {
+            if (total >= goal && goal > 0) {
+                document.getElementById('goalMessage').textContent = "Congratulations! You've reached your goal!";
+            } else {
+                document.getElementById('goalMessage').textContent = '';
+            }
         }
     </script>
 </body>
+
 </html>
