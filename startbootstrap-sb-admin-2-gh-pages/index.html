@@ -9,7 +9,21 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Dashboard</title>
+    <title>Money Tracker</title>
+    <style>
+        .progress-bar {
+            position: relative;
+            /* Allows absolute positioning inside */
+        }
+
+        #progressText {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: black;
+            /* or any color that makes the text visible */
+        }
+    </style>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -84,6 +98,43 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <!-- Goal Progress Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-info">
+                            <h6 class="m-0 font-weight-bold text-white">Goal Progress</h6>
+                        </div>
+                        <div class="card-body">
+                            <h4 class="text-center">Current Goal: $<span id="displayCurrentGoal">0.00</span></h4>
+                            <div class="progress" style="height: 30px; position: relative;">
+                                <div id="progressBar" class="progress-bar bg-success" role="progressbar"
+                                    style="width: 0%; transition: width 0.6s ease;" aria-valuenow="0" aria-valuemin="0"
+                                    aria-valuemax="100">
+                                    <span id="progressText"
+                                        style="position: absolute; width: 100%; text-align: center; color: black;">$0.00</span>
+                                </div>
+                            </div>
+                            <p id="progressMessage" class="text-center mt-3"></p>
+                        </div>
+                    </div>
+
+                    <!-- Goal Setting Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-primary">
+                            <h6 class="m-0 font-weight-bold text-white">Set Your Goal</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <input type="number" id="goalAmount" class="form-control"
+                                    placeholder="Enter your goal amount" aria-label="Recipient's username"
+                                    aria-describedby="button-setgoal">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-setgoal"
+                                        onclick="setGoal()">Set Goal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Card for Money Tracker -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
@@ -108,31 +159,6 @@
                             <h4 class="text-center">Total Money: $<span id="totalMoney">0.00</span>
                                 <img src="img/Piggy_Bank.jpg" width="25" height="25">
                             </h4>
-                        </div>
-                    </div>
-
-                    <!-- Card for Goal Setting -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Set Your Goal</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-xl-6">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">$</span>
-                                        </div>
-                                        <input type="number" class="form-control" id="goalAmount" min="0"
-                                            placeholder="Set your goal">
-                                    </div>
-                                </div>
-                                <div class="col-xl-6">
-                                    <button class="btn btn-info" onclick="setGoal()">Set Goal</button>
-                                </div>
-                            </div>
-                            <h4 class="text-center">Goal: $<span id="displayGoal">0.00</span></h4>
-                            <p id="goalMessage" class="text-center font-weight-bold" style="color:green;"></p>
                         </div>
                     </div>
 
@@ -277,46 +303,68 @@
     <script src="js/demo/chart-area-demo.js"></script>
     <script src="js/demo/chart-pie-demo.js"></script>
     <script>
-        let total = 0;
-        let goal = 0;
+        let total = 0; // Total amount of money
+        let goal = 0;  // Goal amount to reach
 
+        // This function updates the display of total money and checks goal status
+        function updateDisplay() {
+            document.getElementById('totalMoney').textContent = total.toFixed(2);
+            updateProgressBar(); // Update progress bar whenever the total changes
+        }
+
+        // This function updates the progress bar based on the current total and goal
+        function updateProgressBar() {
+            let goalAmount = parseFloat(document.getElementById('goalAmount').value) || 0;
+            let totalMoney = parseFloat(document.getElementById('totalMoney').textContent) || 0;
+            let progress = (totalMoney / goalAmount) * 100;
+            progress = progress > 100 ? 100 : progress; // Cap the progress at 100%
+
+            let progressBar = document.getElementById('progressBar');
+            progressBar.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', progress);
+
+            let progressText = document.getElementById('progressText');
+            progressText.textContent = `$${totalMoney.toFixed(2)}`;
+
+            let progressMessage = document.getElementById('progressMessage');
+            progressMessage.textContent = progress >= 100 ? 'Goal Achieved!' : 'Keep Going!';
+        }
+
+
+
+        // This function adds money to the total and updates the display
         function addMoney() {
             const moneyAmount = parseFloat(document.getElementById('moneyAmount').value) || 0;
             total += moneyAmount;
-            updateDisplay();
-            document.getElementById('moneyAmount').value = '';
+            document.getElementById('moneyAmount').value = ''; // Clear the input field
+            updateDisplay(); // Update display after adding money
         }
 
+        // This function subtracts money from the total and updates the display
         function subtractMoney() {
             const moneyAmount = parseFloat(document.getElementById('moneyAmount').value) || 0;
             if (moneyAmount <= total) {
                 total -= moneyAmount;
-                updateDisplay();
+                document.getElementById('moneyAmount').value = ''; // Clear the input field
+                updateDisplay(); // Update display after subtracting money
             } else {
                 alert("You can't subtract more than you have!");
             }
-            document.getElementById('moneyAmount').value = '';
         }
 
+        // This function sets the goal and updates the goal display
         function setGoal() {
-            goal = parseFloat(document.getElementById('goalAmount').value) || 0;
-            document.getElementById('displayGoal').textContent = goal.toFixed(2);
-            checkGoalReached();
-        }
-
-        function updateDisplay() {
-            document.getElementById('totalMoney').textContent = total.toFixed(2);
-            checkGoalReached();
-        }
-
-        function checkGoalReached() {
-            if (total >= goal && goal > 0) {
-                document.getElementById('goalMessage').textContent = "Congratulations! You've reached your goal!";
-            } else {
-                document.getElementById('goalMessage').textContent = '';
+            var enteredGoal = parseFloat(document.getElementById('goalAmount').value);
+            if (isNaN(enteredGoal) || enteredGoal <= 0) {
+                alert("Please enter a valid goal amount greater than zero.");
+                return;
             }
+            goal = enteredGoal; // Set the new goal
+            document.getElementById('displayCurrentGoal').textContent = goal.toFixed(2);
+            updateProgressBar(); // Update the progress bar with the new goal
         }
     </script>
+
 </body>
 
 </html>
