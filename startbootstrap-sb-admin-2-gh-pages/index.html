@@ -104,7 +104,7 @@
                             <h6 class="m-0 font-weight-bold text-white">Goal Progress</h6>
                         </div>
                         <div class="card-body">
-                            <h4 class="text-center">Current Goal: $<span id="displayCurrentGoal">0.00</span></h4>
+                            <h4 class="text-center">Current Goal: $<span id="displayCurrentGoal">0.00</span> <span id="displayName"> </span></h4>
                             <div class="progress" style="height: 30px; position: relative;">
                                 <div id="progressBar" class="progress-bar bg-success" role="progressbar"
                                     style="width: 0%; transition: width 0.6s ease;" aria-valuenow="0" aria-valuemin="0"
@@ -130,6 +130,14 @@
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" id="button-setgoal"
                                         onclick="setGoal()">Set Goal</button>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" id="goalName" class="form-control"
+                                    placeholder="Enter goal name" aria-describedby="button-setname">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="button-setname"
+                                        onclick="setName()">Set Name</button>
                                 </div>
                             </div>
                         </div>
@@ -161,87 +169,6 @@
                             </h4>
                         </div>
                     </div>
-
-                    <!-- Content Row -->
-
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Earnings Overview</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
 
@@ -362,6 +289,16 @@
             goal = enteredGoal; // Set the new goal
             document.getElementById('displayCurrentGoal').textContent = goal.toFixed(2);
             updateProgressBar(); // Update the progress bar with the new goal
+        }
+
+        //This function sets the goal name
+        function setName() {
+            var name = document.getElementById('goalName').value;
+            if (name == "") {
+                alert("Please enter a valid name.");
+                return;
+            }
+            document.getElementById('displayName').textContent = name;
         }
     </script>
 
